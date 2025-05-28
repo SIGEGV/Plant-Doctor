@@ -22,7 +22,6 @@ CATEGORIES = [
     "Tomato___Tomato_mosaic_virus", "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
 ]
 
-# Load Training Data
 train_data = []
 for category in CATEGORIES:
     label = CATEGORIES.index(category)
@@ -33,7 +32,6 @@ for category in CATEGORIES:
         img = cv.resize(img, (64, 64))
         train_data.append([img, label])
 
-# Load Testing Data
 test_data = []
 for category in CATEGORIES:
     label = CATEGORIES.index(category)
@@ -44,17 +42,16 @@ for category in CATEGORIES:
         img = cv.resize(img, (64, 64))
         test_data.append([img, label])
 
-# Shuffle
 random.shuffle(train_data)
 random.shuffle(test_data)
 
-# Split into X and y
+
 X_train = [features for features, label in train_data]
 y_train = [label for features, label in train_data]
 X_test = [features for features, label in test_data]
 y_test = [label for features, label in test_data]
 
-# Label Names
+
 label_names = [
     "BACTERIAL SPOT", "EARLY BLIGHT", "HEALTHY", "LATE BLIGHT", "LEAF MOLD",
     "SEPTORIA LEAF SPOT", "SPIDER MITE", "TARGET SPOT", "MOSAIC VIRUS", "YELLOW LEAF CURL VIRUS"
@@ -63,11 +60,10 @@ label_names = [
 Y = [label_names[i] for i in y_train]
 Z = [label_names[i] for i in y_test]
 
-# Normalize & reshape
 X_train = np.array(X_train).reshape(-1, 64, 64, 3) / 255.0
 X_test = np.array(X_test).reshape(-1, 64, 64, 3) / 255.0
 
-# Visualizations
+
 os.makedirs("GRAPH", exist_ok=True)
 
 plt.figure()
@@ -88,11 +84,11 @@ plt.tight_layout()
 plt.savefig("GRAPH/test_distribution.png")
 plt.close()
 
-# One-hot encoding
+
 one_hot_train = to_categorical(y_train)
 one_hot_test = to_categorical(y_test)
 
-# Build Model
+
 classifier = Sequential()
 classifier.add(Conv2D(32, (3, 3), input_shape=(64, 64, 3), activation='relu'))
 classifier.add(MaxPooling2D(pool_size=(2, 2)))
@@ -112,18 +108,18 @@ classifier.add(Dense(10, activation='softmax'))
 classifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 classifier.summary()
 
-# Train
+
 hist = classifier.fit(X_train, one_hot_train, epochs=75, batch_size=128, validation_split=0.2)
 
-# Save model
+
 classifier.save("/home/smurfy/Desktop/Plant_Disease_Detection/MAJOR_PROJECT/TOMATO/MODELS/NEW.h5")
 
-# Evaluate
+
 test_loss, test_acc = classifier.evaluate(X_test, one_hot_test)
 print("Test Loss:", test_loss)
 print("Test Accuracy:", test_acc)
 
-# Save Loss Plot
+
 plt.figure()
 plt.plot(hist.history['loss'])
 plt.plot(hist.history['val_loss'])
@@ -134,7 +130,7 @@ plt.legend(['Train', 'Validation'], loc='upper right')
 plt.savefig("GRAPH/loss_plot.png")
 plt.close()
 
-# Save Accuracy Plot
+
 plt.figure()
 plt.plot(hist.history['accuracy'])
 plt.plot(hist.history['val_accuracy'])
@@ -145,11 +141,9 @@ plt.legend(['Train', 'Validation'], loc='upper left')
 plt.savefig("GRAPH/accuracy_plot.png")
 plt.close()
 
-# Predict
 y_pred = np.argmax(classifier.predict(X_test), axis=1)
 y_prob = classifier.predict(X_test)
 
-# ROC Curves
 fpr = {}
 tpr = {}
 thresh = {}
@@ -172,7 +166,6 @@ plt.tight_layout()
 plt.savefig("GRAPH/roc_curve.png")
 plt.close()
 
-# Confusion Matrix
 plt.figure()
 sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues')
 plt.title("Confusion Matrix")

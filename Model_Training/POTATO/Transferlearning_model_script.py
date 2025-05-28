@@ -25,7 +25,7 @@ import joblib
 class Config:
     DATASET_DIR = "/home/smurfy/Desktop/Plant_Disease_Detection/DATASET/Potato" 
     IMG_SIZE = (224, 224)
-    BATCH_SIZE = 8  # Smaller batch to avoid OOM
+    BATCH_SIZE = 8  
     VAL_SPLIT = 0.2
     SEED = 42
     PLOT_DIR = "./GRAPH"
@@ -89,9 +89,9 @@ class FeatureExtractor:
     def extract(self, dataset):
         features, labels = [], []
 
-        dataset = dataset.unbatch().batch(4)  # small batch to avoid OOM
+        dataset = dataset.unbatch().batch(4) 
 
-        # tqdm with white color progress bar
+       
         for batch_images, batch_labels in tqdm(dataset, desc="Extracting Features", colour="white", bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}"):
             preprocessed = tf.keras.applications.mobilenet_v2.preprocess_input(batch_images)
             batch_features = self.model(preprocessed, training=False).numpy()
@@ -190,20 +190,20 @@ def main():
             trainer.train(X_train, y_train)
             acc, y_pred = trainer.evaluate(X_test, y_test)
 
-            # Save confusion matrix plot
+           
             sub_dir = os.path.join(config.PLOT_DIR, model_name, ml_model.upper())
             plot_title = f"{model_name}_{ml_model.upper()}"
             save_confusion_matrix(y_test, y_pred, class_names, plot_title, sub_dir)
 
-            # Save trained model
+           
             model_save_dir = f"./MODELS/{model_name}/{ml_model.upper()}"
             model_save_path = os.path.join(model_save_dir, f"{model_name}_{ml_model.upper()}.joblib")
             trainer.save(model_save_path)
 
-            # Track accuracy
+            
             all_model_accuracies[plot_title] = acc
 
-    # Save overall comparison plot
+    
     comparison_plot_path = os.path.join(config.PLOT_DIR, "Comparison", "all_model_accuracies.png")
     save_accuracy_plot(all_model_accuracies, "All Model Accuracies", comparison_plot_path)
 

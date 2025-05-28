@@ -9,34 +9,70 @@ import { useToast } from "@/hooks/use-toast";
 
 const plantData = {
   tomato: {
-    name: "Tomato",
-    diseases: [
-      {
-        name: "Early Blight",
-        symptoms: "Dark spots with concentric rings on older leaves, yellowing and wilting",
-        causes: "Alternaria solani fungus, favored by warm humid conditions",
-        treatment: "Fungicide application, proper spacing, crop rotation"
-      },
-      {
-        name: "Late Blight",
-        symptoms: "Water-soaked lesions on leaves, white fuzzy growth on undersides",
-        causes: "Phytophthora infestans, thrives in cool wet weather",
-        treatment: "Copper-based fungicides, remove affected plants, improve air circulation"
-      },
-      {
-        name: "Bacterial Spot",
-        symptoms: "Small dark spots on leaves and fruit, yellowing around spots",
-        causes: "Xanthomonas bacteria, spread by water splash and insects",
-        treatment: "Copper sprays, resistant varieties, avoid overhead watering"
-      },
-      {
-        name: "Mosaic Virus",
-        symptoms: "Mottled yellow-green pattern on leaves, stunted growth",
-        causes: "Tobacco mosaic virus, spread by insects and contaminated tools",
-        treatment: "Remove infected plants, control aphids, use virus-free seeds"
-      }
-    ]
-  },
+  name: "Tomato",
+  diseases: [
+    {
+      name: "Bacterial Spot",
+      symptoms: "Small dark spots on leaves and fruit, yellowing around spots",
+      causes: "Xanthomonas bacteria, spread by water splash and insects",
+      treatment: "Copper sprays, resistant varieties, avoid overhead watering"
+    },
+    {
+      name: "Early Blight",
+      symptoms: "Dark spots with concentric rings on older leaves, yellowing and wilting",
+      causes: "Alternaria solani fungus, favored by warm humid conditions",
+      treatment: "Fungicide application, proper spacing, crop rotation"
+    },
+    {
+      name: "Healthy",
+      symptoms: "No disease symptoms, healthy plant",
+      causes: "N/A",
+      treatment: "N/A"
+    },
+    {
+      name: "Late Blight",
+      symptoms: "Water-soaked lesions on leaves, white fuzzy growth on undersides",
+      causes: "Phytophthora infestans, thrives in cool wet weather",
+      treatment: "Copper-based fungicides, remove affected plants, improve air circulation"
+    },
+    {
+      name: "Leaf Mold",
+      symptoms: "Yellow spots on upper leaf surface, mold growth on undersides",
+      causes: "Fulvia fulva fungus, humid conditions",
+      treatment: "Fungicides, improve air circulation, avoid wetting leaves"
+    },
+    {
+      name: "Septoria Leaf Spot",
+      symptoms: "Small circular spots with dark borders on leaves",
+      causes: "Septoria lycopersici fungus, spreads in wet weather",
+      treatment: "Fungicides, remove infected leaves, crop rotation"
+    },
+    {
+      name: "Spider Mites",
+      symptoms: "Tiny spots on leaves, webbing under leaves, leaf discoloration",
+      causes: "Tetranychus mites, dry and dusty conditions",
+      treatment: "Miticides, insecticidal soap, maintain humidity"
+    },
+    {
+      name: "Target Spot",
+      symptoms: "Brown spots with concentric rings on leaves and stems",
+      causes: "Corynespora cassiicola fungus",
+      treatment: "Fungicides, remove infected debris"
+    },
+    {
+      name: "Tomato Mosaic Virus",
+      symptoms: "Mottled yellow-green pattern on leaves, stunted growth",
+      causes: "Tobacco mosaic virus, spread by insects and contaminated tools",
+      treatment: "Remove infected plants, control aphids, use virus-free seeds"
+    },
+    {
+      name: "Tomato Yellow Leaf Curl Virus",
+      symptoms: "Yellowing and curling of leaves, stunted plant growth",
+      causes: "Begomovirus transmitted by whiteflies",
+      treatment: "Control whiteflies, remove infected plants, resistant varieties"
+    }
+  ]
+},
   potato: {
     name: "Potato",
     diseases: [
@@ -82,7 +118,36 @@ const plantData = {
         treatment: "Continue good cultural practices, regular monitoring"
       }
     ]
-  }
+  },
+  grape: {
+    name: "Grape",
+  diseases: [
+    {
+      name: "Black Rot",
+      symptoms: "Small brown spots on leaves that enlarge and turn black, shriveled black fruit (mummies)",
+      causes: "Guignardia bidwellii fungus, spread by rain and humid conditions",
+      treatment: "Prune infected areas, apply fungicides, ensure good air circulation"
+    },
+    {
+      name: "ESCA",
+      symptoms: "Interveinal chlorosis, leaf scorching, black streaks in wood",
+      causes: "Fungal pathogens including Phaeoacremonium spp. and Phaeomoniella chlamydospora",
+      treatment: "Remove infected vines, avoid pruning wounds during wet conditions"
+    },
+    {
+      name: "Leaf Blight",
+      symptoms: "Irregular brown spots on leaves, leaf drop, reduced vigor",
+      causes: "Caused by fungal pathogens, often linked to poor ventilation and high humidity",
+      treatment: "Remove infected leaves, apply appropriate fungicide, improve airflow"
+    },
+    {
+      name: "Healthy",
+      symptoms: "No visible spots, uniform green leaves, vigorous growth",
+      causes: "Optimal conditions and disease-free environment",
+      treatment: "Maintain proper vineyard management and regular monitoring"
+    }
+  ]
+}
 };
 
 const PlantPage = () => {

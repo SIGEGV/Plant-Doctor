@@ -8,7 +8,8 @@ import { Leaf, Shield, Search, ArrowRight } from "lucide-react";
 const plants = [
   { id: "tomato", name: "Tomato", description: "Common vegetable crop susceptible to various fungal and bacterial diseases" },
   { id: "potato", name: "Potato", description: "Important staple crop affected by blight and other diseases" },
-  { id: "bean", name: "Bean", description: "Legume crop with various leaf spot and blight diseases" }
+  { id: "bean", name: "Bean", description: "Legume crop with various leaf spot and blight diseases" },
+  { id: "grape", name: "Grape", description: "Vine fruit susceptible to fungal diseases like black rot and powdery mildew" }
 ];
 
 const Index = () => {

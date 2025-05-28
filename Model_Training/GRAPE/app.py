@@ -14,6 +14,7 @@ CORS(app)
 
 IMG_SIZE = (224, 224)
 
+# Configuration for plants using SVM and Keras models (excluding grape here)
 PLANT_CONFIGS = {
     'potato': {
         'model_path': "/home/smurfy/Desktop/Plant-Doctor/Model_Training/POTATO/MODELS/MobileNetV2/SVM/MobileNetV2_SVM.joblib",
@@ -29,12 +30,8 @@ PLANT_CONFIGS = {
         'class_names': [
             "Angular Leaf Spot", "Bean Rust", "Healthy"
         ]
-    },
-    'grape': {
-        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Model_Training/GRAPE/MODELS/MobileNetV2/CNN/MobileNetV2_CNN.h5",
-        'model_type': 'keras',
-        'class_names': ['Black Rot', 'ESCA', 'healthy', 'Leaf Blight']
     }
+    # Note: grape handled separately below
 }
 
 TOMATO_MODEL_PATH = "/home/smurfy/Desktop/Plant-Doctor/Model_Training/TOMATO/MODELS/NEW.h5"
@@ -44,6 +41,7 @@ TOMATO_CLASSES = [
     "Tomato Mosaic Virus", "Tomato Yellow Leaf Curl Virus"
 ]
 
+# Load MobileNetV2 feature extractor for SVM and grape CNN features
 feature_extractor = MobileNetV2(
     input_shape=IMG_SIZE + (3,),
     include_top=False,
@@ -53,6 +51,8 @@ feature_extractor = MobileNetV2(
 feature_extractor.trainable = False
 
 models = {}
+
+# Load SVM or Keras models for potato and bean
 for plant, config in PLANT_CONFIGS.items():
     if os.path.exists(config['model_path']):
         if config['model_type'] == 'keras':
@@ -60,10 +60,21 @@ for plant, config in PLANT_CONFIGS.items():
         else:
             models[plant] = joblib.load(config['model_path'])
 
+# Load tomato keras model
 if os.path.exists(TOMATO_MODEL_PATH):
     tomato_model = tf.keras.models.load_model(TOMATO_MODEL_PATH)
 else:
     tomato_model = None
+
+# Load grape keras CNN model and add to models dict
+GRAPE_MODEL_PATH = "/home/smurfy/Desktop/Plant-Doctor/Model_Training/GRAPE/MODELS/MobileNetV2/CNN/MobileNetV2_CNN.h5"
+GRAPE_CLASSES = ['Black Rot', 'ESCA', 'healthy', 'Leaf Blight']
+
+if os.path.exists(GRAPE_MODEL_PATH):
+    grape_model = tf.keras.models.load_model(GRAPE_MODEL_PATH)
+    models['grape'] = grape_model
+else:
+    grape_model = None
 
 def prepare_image(image_bytes):
     image = Image.open(BytesIO(image_bytes)).convert("RGB")
@@ -122,6 +133,7 @@ def predict_plant(plant):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @app.route("/api/tomato/predict", methods=["POST"])
 def predict_tomato():
     if tomato_model is None:
@@ -147,6 +159,9 @@ def predict_tomato():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+import traceback
+
 @app.route("/api/grape/predict", methods=["POST"])
 def predict_grape():
     try:
@@ -162,18 +177,15 @@ def predict_grape():
 
         image_bytes = file.read()
         image = Image.open(BytesIO(image_bytes)).convert("RGB")
-        image = image.resize(IMG_SIZE)
+        image = image.resize(IMG_SIZE)  # 224x224
 
         img_array = np.array(image)
-        img_array = preprocess_input(img_array)
-        img_array = np.expand_dims(img_array, axis=0)
+        img_array = preprocess_input(img_array)  # MobileNetV2 preprocessing
+        img_array = np.expand_dims(img_array, axis=0)  # (1,224,224,3)
 
-        # ✅ Step 1: Feature extraction using MobileNetV2
-        features = feature_extractor(img_array, training=False).numpy()
-
-        # ✅ Step 2: Classifier prediction
+        features = feature_extractor(img_array, training=False).numpy()  # (1,1280)
         prediction = models['grape'].predict(features)[0]
-        predicted_class = PLANT_CONFIGS['grape']['class_names'][int(np.argmax(prediction))]
+        predicted_class = GRAPE_CLASSES[int(np.argmax(prediction))]
 
         return jsonify({
             'plant': 'grape',
@@ -181,18 +193,23 @@ def predict_grape():
         }), 200
 
     except Exception as e:
+        print("Error in /api/grape/predict:", e)
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
-
 
 @app.route("/api/health", methods=["GET"])
 def health_check():
     available = list(models.keys())
     if tomato_model:
         available.append('tomato')
+    if grape_model:
+        available.append('grape')
+
     return jsonify({
         'status': 'healthy',
         'available_plants': available
     }), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)
