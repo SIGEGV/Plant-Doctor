@@ -103,6 +103,71 @@ def save_confusion_matrix(y_true, y_pred, class_names, title, save_dir):
     plt.close()
     print(f"Confusion matrix saved to {save_path}")
 
+def plot_training_curves(history, model_name, save_dir):
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Accuracy plot
+    plt.figure(figsize=(8, 6))
+    plt.plot(history.history['accuracy'], label='Train Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Val Accuracy')
+    plt.title(f'{model_name} - Accuracy over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    acc_path = os.path.join(save_dir, f"{model_name}_accuracy.png")
+    plt.savefig(acc_path)
+    plt.close()
+    print(f"Saved accuracy plot to {acc_path}")
+
+    # Loss plot
+    plt.figure(figsize=(8, 6))
+    plt.plot(history.history['loss'], label='Train Loss')
+    plt.plot(history.history['val_loss'], label='Val Loss')
+    plt.title(f'{model_name} - Loss over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    loss_path = os.path.join(save_dir, f"{model_name}_loss.png")
+    plt.savefig(loss_path)
+    plt.close()
+    print(f"Saved loss plot to {loss_path}")
+
+def plot_model_comparison(metrics_dict, save_dir):
+    os.makedirs(save_dir, exist_ok=True)
+    
+    models = list(metrics_dict.keys())
+    accuracies = [metrics_dict[m]['accuracy'] for m in models]
+    losses = [metrics_dict[m]['val_loss'] for m in models]
+
+    # Accuracy bar chart
+    plt.figure(figsize=(8, 6))
+    plt.bar(models, accuracies, color='skyblue')
+    plt.title("Model Comparison - Accuracy")
+    plt.ylabel("Accuracy")
+    plt.ylim(0, 1)
+    plt.grid(axis='y')
+    plt.tight_layout()
+    acc_path = os.path.join(save_dir, "model_accuracy_comparison.png")
+    plt.savefig(acc_path)
+    plt.close()
+    print(f"Saved model accuracy comparison plot to {acc_path}")
+
+    # Loss bar chart
+    plt.figure(figsize=(8, 6))
+    plt.bar(models, losses, color='salmon')
+    plt.title("Model Comparison - Validation Loss")
+    plt.ylabel("Validation Loss")
+    plt.grid(axis='y')
+    plt.tight_layout()
+    loss_path = os.path.join(save_dir, "model_loss_comparison.png")
+    plt.savefig(loss_path)
+    plt.close()
+    print(f"Saved model loss comparison plot to {loss_path}")
+
 # ====================
 # MAIN EXECUTION
 # ====================
@@ -116,6 +181,8 @@ def main():
         "DenseNet121": DenseNet121,
         "ResNet50": ResNet50
     }
+
+    model_metrics = {}  # For storing accuracy and loss per model
 
     for model_name, base_model_fn in base_models.items():
         print(f"\n--- Using {model_name} for feature extraction ---")
@@ -157,6 +224,10 @@ def main():
         print(f"Training CNN classifier on top of {model_name} features")
         history = cnn_classifier.fit(train_ds, validation_data=val_ds, epochs=20)
 
+        # Plot accuracy and loss curves
+        curve_dir = os.path.join(config.PLOT_DIR, model_name, "CNN")
+        plot_training_curves(history, model_name, curve_dir)
+
         y_pred_probs = cnn_classifier.predict(val_ds)
         y_pred = np.argmax(y_pred_probs, axis=1)
 
@@ -164,13 +235,24 @@ def main():
         print(f"Accuracy with {model_name}: {acc:.4f}")
         print(classification_report(y_test, y_pred, target_names=class_names))
 
+        # Save confusion matrix
         sub_dir = os.path.join(config.PLOT_DIR, model_name, "CNN")
         save_confusion_matrix(y_test, y_pred, class_names, f"{model_name}_CNN", sub_dir)
 
+        # Save model
         save_path = os.path.join(config.MODEL_DIR, model_name, "CNN", f"{model_name}_CNN.h5")
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         cnn_classifier.save(save_path)
         print(f"Saved CNN classifier model to {save_path}")
+
+        final_val_loss = history.history['val_loss'][-1]
+        model_metrics[model_name] = {
+            "accuracy": acc,
+            "val_loss": final_val_loss
+        }
+
+    # Plot comparison between models
+    plot_model_comparison(model_metrics, config.PLOT_DIR)
 
 if __name__ == "__main__":
     main()
