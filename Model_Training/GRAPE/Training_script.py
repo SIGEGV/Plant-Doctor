@@ -1,7 +1,10 @@
 import os
+import json
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
@@ -103,10 +106,23 @@ def save_confusion_matrix(y_true, y_pred, class_names, title, save_dir):
     plt.close()
     print(f"Confusion matrix saved to {save_path}")
 
+def save_classification_report_plot(y_true, y_pred, class_names, model_name, save_dir):
+    report = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)
+    df = pd.DataFrame(report).transpose()
+
+    os.makedirs(save_dir, exist_ok=True)
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(df.iloc[:-1, :-1], annot=True, cmap="Blues", fmt=".2f")
+    plt.title(f"{model_name} - Classification Report")
+    plt.tight_layout()
+    path = os.path.join(save_dir, f"{model_name}_classification_report.png")
+    plt.savefig(path)
+    plt.close()
+    print(f"Saved classification report plot to {path}")
+
 def plot_training_curves(history, model_name, save_dir):
     os.makedirs(save_dir, exist_ok=True)
 
-    # Accuracy plot
     plt.figure(figsize=(8, 6))
     plt.plot(history.history['accuracy'], label='Train Accuracy')
     plt.plot(history.history['val_accuracy'], label='Val Accuracy')
@@ -116,12 +132,9 @@ def plot_training_curves(history, model_name, save_dir):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    acc_path = os.path.join(save_dir, f"{model_name}_accuracy.png")
-    plt.savefig(acc_path)
+    plt.savefig(os.path.join(save_dir, f"{model_name}_accuracy.png"))
     plt.close()
-    print(f"Saved accuracy plot to {acc_path}")
 
-    # Loss plot
     plt.figure(figsize=(8, 6))
     plt.plot(history.history['loss'], label='Train Loss')
     plt.plot(history.history['val_loss'], label='Val Loss')
@@ -131,19 +144,23 @@ def plot_training_curves(history, model_name, save_dir):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    loss_path = os.path.join(save_dir, f"{model_name}_loss.png")
-    plt.savefig(loss_path)
+    plt.savefig(os.path.join(save_dir, f"{model_name}_loss.png"))
     plt.close()
-    print(f"Saved loss plot to {loss_path}")
+
+def save_training_history(history, model_name, save_dir):
+    os.makedirs(save_dir, exist_ok=True)
+    history_dict = history.history
+    history_dict["epochs"] = len(history_dict["loss"])
+    with open(os.path.join(save_dir, f"{model_name}_training_history.json"), 'w') as f:
+        json.dump(history_dict, f, indent=4)
 
 def plot_model_comparison(metrics_dict, save_dir):
     os.makedirs(save_dir, exist_ok=True)
-    
+
     models = list(metrics_dict.keys())
     accuracies = [metrics_dict[m]['accuracy'] for m in models]
     losses = [metrics_dict[m]['val_loss'] for m in models]
 
-    # Accuracy bar chart
     plt.figure(figsize=(8, 6))
     plt.bar(models, accuracies, color='skyblue')
     plt.title("Model Comparison - Accuracy")
@@ -151,22 +168,25 @@ def plot_model_comparison(metrics_dict, save_dir):
     plt.ylim(0, 1)
     plt.grid(axis='y')
     plt.tight_layout()
-    acc_path = os.path.join(save_dir, "model_accuracy_comparison.png")
-    plt.savefig(acc_path)
+    plt.savefig(os.path.join(save_dir, "model_accuracy_comparison.png"))
     plt.close()
-    print(f"Saved model accuracy comparison plot to {acc_path}")
 
-    # Loss bar chart
     plt.figure(figsize=(8, 6))
     plt.bar(models, losses, color='salmon')
     plt.title("Model Comparison - Validation Loss")
     plt.ylabel("Validation Loss")
     plt.grid(axis='y')
     plt.tight_layout()
-    loss_path = os.path.join(save_dir, "model_loss_comparison.png")
-    plt.savefig(loss_path)
+    plt.savefig(os.path.join(save_dir, "model_loss_comparison.png"))
     plt.close()
-    print(f"Saved model loss comparison plot to {loss_path}")
+
+def save_accuracy_json(model_metrics, plant_name="GRAPE"):
+    save_path = os.path.join(plant_name, "GRAPH", "Comparison", f"{plant_name}_accuracy.json")
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    output_dict = {f"{k}_KERAS": {"accuracy": round(v["accuracy"], 4)} for k, v in model_metrics.items()}
+    with open(save_path, "w") as f:
+        json.dump(output_dict, f, indent=4)
+    print(f"Saved accuracy JSON to {save_path}")
 
 # ====================
 # MAIN EXECUTION
@@ -182,7 +202,7 @@ def main():
         "ResNet50": ResNet50
     }
 
-    model_metrics = {}  # For storing accuracy and loss per model
+    model_metrics = {}
 
     for model_name, base_model_fn in base_models.items():
         print(f"\n--- Using {model_name} for feature extraction ---")
@@ -224,9 +244,9 @@ def main():
         print(f"Training CNN classifier on top of {model_name} features")
         history = cnn_classifier.fit(train_ds, validation_data=val_ds, epochs=20)
 
-        # Plot accuracy and loss curves
         curve_dir = os.path.join(config.PLOT_DIR, model_name, "CNN")
         plot_training_curves(history, model_name, curve_dir)
+        save_training_history(history, model_name, curve_dir)
 
         y_pred_probs = cnn_classifier.predict(val_ds)
         y_pred = np.argmax(y_pred_probs, axis=1)
@@ -235,15 +255,12 @@ def main():
         print(f"Accuracy with {model_name}: {acc:.4f}")
         print(classification_report(y_test, y_pred, target_names=class_names))
 
-        # Save confusion matrix
-        sub_dir = os.path.join(config.PLOT_DIR, model_name, "CNN")
-        save_confusion_matrix(y_test, y_pred, class_names, f"{model_name}_CNN", sub_dir)
+        save_confusion_matrix(y_test, y_pred, class_names, f"{model_name}_CNN", curve_dir)
+        save_classification_report_plot(y_test, y_pred, class_names, f"{model_name}_CNN", curve_dir)
 
-        # Save model
-        save_path = os.path.join(config.MODEL_DIR, model_name, "CNN", f"{model_name}_CNN.h5")
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        cnn_classifier.save(save_path)
-        print(f"Saved CNN classifier model to {save_path}")
+        model_path = os.path.join(config.MODEL_DIR, model_name, "CNN", f"{model_name}_CNN.h5")
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        cnn_classifier.save(model_path)
 
         final_val_loss = history.history['val_loss'][-1]
         model_metrics[model_name] = {
@@ -251,8 +268,8 @@ def main():
             "val_loss": final_val_loss
         }
 
-    # Plot comparison between models
     plot_model_comparison(model_metrics, config.PLOT_DIR)
+    save_accuracy_json(model_metrics, plant_name="GRAPE")
 
 if __name__ == "__main__":
     main()

@@ -168,10 +168,10 @@ def predict_grape():
         img_array = preprocess_input(img_array)
         img_array = np.expand_dims(img_array, axis=0)
 
-        # ✅ Step 1: Feature extraction using MobileNetV2
+        #Feature extraction using MobileNetV2
         features = feature_extractor(img_array, training=False).numpy()
 
-        # ✅ Step 2: Classifier prediction
+        # Classifier prediction
         prediction = models['grape'].predict(features)[0]
         predicted_class = PLANT_CONFIGS['grape']['class_names'][int(np.argmax(prediction))]
 
@@ -190,7 +190,7 @@ def health_check():
     if tomato_model:
         available.append('tomato')
     return jsonify({
-        'status': 'healthy',
+            'status': 'healthy',
         'available_plants': available
     }), 200
 

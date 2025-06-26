@@ -1,0 +1,7 @@
+Model,Classifier,Accuracy,Model_Path,Confusion_Matrix,History_File
+MobileNetV2,SVM,0.899,MODELS/MobileNetV2/SVM/MobileNetV2_SVM.joblib,./GRAPH/MobileNetV2/SVM/MobileNetV2_SVM_confusion_matrix.png,./HISTORY/MobileNetV2_SVM_history.json
+MobileNetV2,RF,0.8232,MODELS/MobileNetV2/RF/MobileNetV2_RF.joblib,./GRAPH/MobileNetV2/RF/MobileNetV2_RF_confusion_matrix.png,./HISTORY/MobileNetV2_RF_history.json
+DenseNet121,SVM,0.8788,MODELS/DenseNet121/SVM/DenseNet121_SVM.joblib,./GRAPH/DenseNet121/SVM/DenseNet121_SVM_confusion_matrix.png,./HISTORY/DenseNet121_SVM_history.json
+DenseNet121,RF,0.8586,MODELS/DenseNet121/RF/DenseNet121_RF.joblib,./GRAPH/DenseNet121/RF/DenseNet121_RF_confusion_matrix.png,./HISTORY/DenseNet121_RF_history.json
+ResNet50,SVM,0.4798,MODELS/ResNet50/SVM/ResNet50_SVM.joblib,./GRAPH/ResNet50/SVM/ResNet50_SVM_confusion_matrix.png,./HISTORY/ResNet50_SVM_history.json
+ResNet50,RF,0.6162,MODELS/ResNet50/RF/ResNet50_RF.joblib,./GRAPH/ResNet50/RF/ResNet50_RF_confusion_matrix.png,./HISTORY/ResNet50_RF_history.json

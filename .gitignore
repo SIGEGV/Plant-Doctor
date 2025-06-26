@@ -175,3 +175,4 @@ tf-venv/
 *.joblib
 *.h5
 node_modules/
+Plant-Doctor-Test/

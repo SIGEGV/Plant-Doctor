@@ -1,0 +1,11 @@
+{
+    "MobileNetV2_KERAS": {
+        "accuracy": 0.9402
+    },
+    "DenseNet121_KERAS": {
+        "accuracy": 0.9479
+    },
+    "ResNet50_KERAS": {
+        "accuracy": 0.6728
+    }
+}

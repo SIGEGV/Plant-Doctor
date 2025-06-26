@@ -1,0 +1,50 @@
+[
+    {
+        "Model": "MobileNetV2",
+        "Classifier": "SVM",
+        "Accuracy": 0.899,
+        "Model_Path": "MODELS/MobileNetV2/SVM/MobileNetV2_SVM.joblib",
+        "Confusion_Matrix": "./GRAPH/MobileNetV2/SVM/MobileNetV2_SVM_confusion_matrix.png",
+        "History_File": "./HISTORY/MobileNetV2_SVM_history.json"
+    },
+    {
+        "Model": "MobileNetV2",
+        "Classifier": "RF",
+        "Accuracy": 0.8232,
+        "Model_Path": "MODELS/MobileNetV2/RF/MobileNetV2_RF.joblib",
+        "Confusion_Matrix": "./GRAPH/MobileNetV2/RF/MobileNetV2_RF_confusion_matrix.png",
+        "History_File": "./HISTORY/MobileNetV2_RF_history.json"
+    },
+    {
+        "Model": "DenseNet121",
+        "Classifier": "SVM",
+        "Accuracy": 0.8788,
+        "Model_Path": "MODELS/DenseNet121/SVM/DenseNet121_SVM.joblib",
+        "Confusion_Matrix": "./GRAPH/DenseNet121/SVM/DenseNet121_SVM_confusion_matrix.png",
+        "History_File": "./HISTORY/DenseNet121_SVM_history.json"
+    },
+    {
+        "Model": "DenseNet121",
+        "Classifier": "RF",
+        "Accuracy": 0.8586,
+        "Model_Path": "MODELS/DenseNet121/RF/DenseNet121_RF.joblib",
+        "Confusion_Matrix": "./GRAPH/DenseNet121/RF/DenseNet121_RF_confusion_matrix.png",
+        "History_File": "./HISTORY/DenseNet121_RF_history.json"
+    },
+    {
+        "Model": "ResNet50",
+        "Classifier": "SVM",
+        "Accuracy": 0.4798,
+        "Model_Path": "MODELS/ResNet50/SVM/ResNet50_SVM.joblib",
+        "Confusion_Matrix": "./GRAPH/ResNet50/SVM/ResNet50_SVM_confusion_matrix.png",
+        "History_File": "./HISTORY/ResNet50_SVM_history.json"
+    },
+    {
+        "Model": "ResNet50",
+        "Classifier": "RF",
+        "Accuracy": 0.6162,
+        "Model_Path": "MODELS/ResNet50/RF/ResNet50_RF.joblib",
+        "Confusion_Matrix": "./GRAPH/ResNet50/RF/ResNet50_RF_confusion_matrix.png",
+        "History_File": "./HISTORY/ResNet50_RF_history.json"
+    }
+]
