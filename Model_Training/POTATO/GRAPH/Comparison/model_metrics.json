@@ -1,11 +1,29 @@
 {
-    "MobileNetV2_KERAS": {
-        "accuracy": 0.9402
+    "MobileNetV2_SVM": {
+        "accuracy": 0.9371165644171779
     },
-    "DenseNet121_KERAS": {
-        "accuracy": 0.9479
+    "MobileNetV2_RF": {
+        "accuracy": 0.8726993865030674
     },
-    "ResNet50_KERAS": {
-        "accuracy": 0.6728
+    "MobileNetV2_CNN": {
+        "accuracy": 0.9447852760736196
+    },
+    "DenseNet121_SVM": {
+        "accuracy": 0.9330265848670757
+    },
+    "DenseNet121_RF": {
+        "accuracy": 0.9151329243353783
+    },
+    "DenseNet121_CNN": {
+        "accuracy": 0.9468302658486708
+    },
+    "ResNet50_SVM": {
+        "accuracy": 0.5567484662576687
+    },
+    "ResNet50_RF": {
+        "accuracy": 0.6973415132924335
+    },
+    "ResNet50_CNN": {
+        "accuracy": 0.6840490797546013
     }
 }

@@ -16,7 +16,7 @@ IMG_SIZE = (224, 224)
 
 PLANT_CONFIGS = {
     'potato': {
-        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Model_Training/POTATO/MODELS/MobileNetV2/SVM/MobileNetV2_SVM.joblib",
+        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Backend/Models/POTATO_MobileNetV2_SVM.joblib",
         'model_type': 'svm',
         'class_names': [
             "Bacterial Wilt", "Early Blight", "Healthy", "Late Blight", "Leaf Roll Virus",
@@ -24,20 +24,20 @@ PLANT_CONFIGS = {
         ]
     },
     'bean': {
-        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Model_Training/BEAN/MODELS/MobileNetV2/SVM/MobileNetV2_SVM.joblib",
+        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Backend/Models/BEAN_MobileNetV2_SVM.joblib",
         'model_type': 'svm',
         'class_names': [
             "Angular Leaf Spot", "Bean Rust", "Healthy"
         ]
     },
     'grape': {
-        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Model_Training/GRAPE/MODELS/MobileNetV2/CNN/MobileNetV2_CNN.h5",
+        'model_path': "/home/smurfy/Desktop/Plant-Doctor/Backend/Models/GRAPE_MobileNetV2_CNN.h5",
         'model_type': 'keras',
         'class_names': ['Black Rot', 'ESCA', 'healthy', 'Leaf Blight']
     }
 }
 
-TOMATO_MODEL_PATH = "/home/smurfy/Desktop/Plant-Doctor/Model_Training/TOMATO/MODELS/NEW.h5"
+TOMATO_MODEL_PATH = "/home/smurfy/Desktop/Plant-Doctor/Backend/Models/TOMATO_MobileNetV2_CNN.h5.h5"
 TOMATO_CLASSES = [
     "Bacterial Spot", "Early Blight", "Healthy", "Late Blight", "Leaf Mold",
     "Septoria Leaf Spot", "Spider Mites", "Target Spot",

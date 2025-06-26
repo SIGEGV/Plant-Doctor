@@ -174,5 +174,6 @@ DATASET/
 tf-venv/
 *.joblib
 *.h5
+MODELS/
 node_modules/
 Plant-Doctor-Test/

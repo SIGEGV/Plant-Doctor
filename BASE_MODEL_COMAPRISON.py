@@ -3,26 +3,26 @@ import json
 import matplotlib.pyplot as plt
 
 # Step 1: Base paper models and their accuracies
-# base_models = [
-#     "EfficientB5Net", "InceptionV3Net", "DenseNet201", "AlexNet", "ResNet101", "VGG19",
-#     "GOGLENet", "PP-DCLNet", "Dilated CNN and Elman", "ResNet50 + EC-BAM", "FasterRCNN",
-#     "DCNN (RESNET)", "DCNN + YOLO", "YOLO-CNN", "D.T + CNN", "Customized GA", "BPN-FA",
-#     "U-Net", "Modified U-Net", "K.S", "RS-Net", "ResNeXt", "MobileNet", "DenseNet121",
-#     "PseuCNN", "Omni-FBPDCNN", "TL FBP-CNN", "A multiinput ResNet", "GLCM + Haralick",
-#     "KMC + GLCM + CNN", "TL (InceptionV3, MobileNetV2, DenseNet121)", 
-#     "TL (ResNet101, VGG16, VGG19, GoogleNet, AlexNet, ResNet50)",
-#     "SVM", "CNN", "CNN", "SVM", "KNN", "KNN", "RF", "RF"
-# ]
+base_models = [
+    "EfficientB5Net", "InceptionV3Net", "DenseNet201", "AlexNet", "ResNet101", "VGG19",
+    "GOGLENet", "PP-DCLNet", "Dilated CNN and Elman", "ResNet50 + EC-BAM", "FasterRCNN",
+    "DCNN (RESNET)", "DCNN + YOLO", "YOLO-CNN", "D.T + CNN", "Customized GA", "BPN-FA",
+    "U-Net", "Modified U-Net", "K.S", "RS-Net", "ResNeXt", "MobileNet", "DenseNet121",
+    "PseuCNN", "Omni-FBPDCNN", "TL FBP-CNN", "A multiinput ResNet", "GLCM + Haralick",
+    "KMC + GLCM + CNN", "TL (InceptionV3, MobileNetV2, DenseNet121)", 
+    "TL (ResNet101, VGG16, VGG19, GoogleNet, AlexNet, ResNet50)",
+    "SVM", "CNN", "CNN", "SVM", "KNN", "KNN", "RF", "RF"
+]
 
-# base_accuracies = [
-#     94.51, 90.53, 89.55, 92.70, 96.00, 96.10,
-#     95.71, 96.00, 95.71, 99.97, 94.50, 98.12,
-#     99.89, 99.90, 99.92, 94.86, 95.63, 98.35,
-#     98.49, 97.43, 91.61, 77.56, 76.16, 74.53,
-#     79.32, 94.29, 94.60, 97.48, 98.30, 97.63,
-#     98.39, 98.90, 99.92, 100.00, 95.29, 99.00,
-#     96.00, 94.50, 91.10, 96.00
-# ]
+base_accuracies = [
+    94.51, 90.53, 89.55, 92.70, 96.00, 96.10,
+    95.71, 96.00, 95.71, 99.97, 94.50, 98.12,
+    99.89, 99.90, 99.92, 94.86, 95.63, 98.35,
+    98.49, 97.43, 91.61, 77.56, 76.16, 74.53,
+    79.32, 94.29, 94.60, 97.48, 98.30, 97.63,
+    98.39, 98.90, 99.92, 100.00, 95.29, 99.00,
+    96.00, 94.50, 91.10, 96.00
+]
 
 # Step 2: Your model accuracy collection
 your_models = []
@@ -64,16 +64,16 @@ for plant, path in model_metric_paths.items():
             your_colors.append('red')
 
 # Step 4: Combine all data
-all_models =  your_models
-all_accuracies = your_accuracies
-all_colors =    your_colors
+all_models = base_models + your_models
+all_accuracies = base_accuracies + your_accuracies
+all_colors = ['skyblue'] * len(base_models) + your_colors
 
 # Step 5: Plot and save
 plt.figure(figsize=(28, 10))
 bars = plt.bar(range(len(all_models)), all_accuracies, color=all_colors)
 plt.xticks(range(len(all_models)), all_models, rotation=75, ha='right', fontsize=7)
 plt.ylabel("Accuracy (%)")
-plt.title("Accuracy Comparison of  Models")
+plt.title("Accuracy Comparison: Base Paper vs Our Models")
 
 # Annotate each bar
 for bar, acc in zip(bars, all_accuracies):
@@ -82,5 +82,5 @@ for bar, acc in zip(bars, all_accuracies):
 
 # Save figure
 plt.tight_layout()
-plt.savefig("MODELS_ACCURACY_ANALYSIS.png", dpi=300, bbox_inches='tight')
+plt.savefig("BASE_MODEL_ACCURACY_COMPARISON.png", dpi=300, bbox_inches='tight')
 print("Saved: BASE_MODEL_ACCURACY_COMPARISON.png")
