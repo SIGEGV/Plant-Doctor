@@ -8,7 +8,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from tensorflow.keras.applications import MobileNetV2, DenseNet121, ResNet50
+from tensorflow.keras.applications import (
+    MobileNetV2,
+    DenseNet121,
+    ResNet50,
+    mobilenet_v2,
+    densenet,
+    resnet50
+)
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras import models, layers, callbacks
 import seaborn as sns
@@ -62,7 +69,7 @@ def load_data(config):
 # FEATURE EXTRACTOR
 # ====================
 class FeatureExtractor:
-    def __init__(self, base_model_fn, input_shape):
+    def __init__(self, base_model_fn, input_shape, preprocess_fn):
         self.model = base_model_fn(
             input_shape=input_shape + (3,),
             include_top=False,
@@ -70,13 +77,14 @@ class FeatureExtractor:
             pooling='avg'
         )
         self.model.trainable = False
+        self.preprocess_fn = preprocess_fn
 
     def extract(self, dataset):
         features, labels = [], []
         dataset = dataset.unbatch().batch(4)
 
         for batch_images, batch_labels in tqdm(dataset, desc="Extracting Features"):
-            preprocessed = tf.keras.applications.mobilenet_v2.preprocess_input(batch_images)
+            preprocessed = self.preprocess_fn(batch_images)
             batch_features = self.model(preprocessed, training=False).numpy()
             features.append(batch_features)
             labels.append(batch_labels.numpy())
@@ -163,16 +171,16 @@ def main():
     num_classes = len(class_names)
 
     base_models = {
-        "MobileNetV2": MobileNetV2,
-        "DenseNet121": DenseNet121,
-        "ResNet50": ResNet50
+        "MobileNetV2": (MobileNetV2, mobilenet_v2.preprocess_input),
+        "DenseNet121": (DenseNet121, densenet.preprocess_input),
+        "ResNet50": (ResNet50, resnet50.preprocess_input)
     }
 
     all_model_accuracies = {}
 
-    for model_name, base_model_fn in base_models.items():
+    for model_name, (base_model_fn, preprocess_fn) in base_models.items():
         print(f"\n--- Using {model_name} ---")
-        extractor = FeatureExtractor(base_model_fn, config.IMG_SIZE)
+        extractor = FeatureExtractor(base_model_fn, config.IMG_SIZE, preprocess_fn)
         X, y = extractor.extract(dataset)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=config.SEED)
